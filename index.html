@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ramazon Vidjet</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0d4f3c 0%, #1b6b4f 50%, #0d4f3c 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .widget-container {
+            width: 100%;
+            max-width: 400px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .header {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.3) 0%, transparent 100%);
+            padding: 25px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .moon-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .title {
+            color: #FFD700;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: rgba(255,255,255,0.8);
+            font-size: 0.9rem;
+        }
+
+        .date-section {
+            padding: 20px;
+            text-align: center;
+            background: rgba(0,0,0,0.2);
+        }
+
+        .day-number {
+            font-size: 4rem;
+            font-weight: bold;
+            color: #FFD700;
+            line-height: 1;
+            margin-bottom: 5px;
+        }
+
+        .day-info {
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        .day-name {
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+        }
+
+        .gregorian-date {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.95rem;
+        }
+
+        .countdown-section {
+            padding: 20px;
+            background: rgba(0,0,0,0.1);
+        }
+
+        .countdown-title {
+            text-align: center;
+            color: rgba(255,255,255,0.8);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .countdown-box {
+            background: rgba(0,0,0,0.3);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .countdown-label {
+            color: #FFD700;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .countdown-time {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: white;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 2px;
+        }
+
+        .next-prayer {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .next-label {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+        }
+
+        .next-time {
+            color: #FFD700;
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .times-section {
+            padding: 20px;
+        }
+
+        .time-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s;
+        }
+
+        .time-card:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateX(5px);
+        }
+
+        .time-card.active {
+            background: rgba(212, 175, 55, 0.2);
+            border-color: #FFD700;
+        }
+
+        .time-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .time-icon {
+            font-size: 2rem;
+        }
+
+        .time-details h3 {
+            color: white;
+            font-size: 1.1rem;
+            margin-bottom: 3px;
+        }
+
+        .time-details p {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.85rem;
+        }
+
+        .time-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #FFD700;
+            font-family: 'Courier New', monospace;
+        }
+
+        .progress-section {
+            padding: 0 20px 20px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            color: rgba(255,255,255,0.8);
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700 0%, #FFA500 100%);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .footer {
+            padding: 15px;
+            text-align: center;
+            background: rgba(0,0,0,0.2);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .footer-text {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.85rem;
+        }
+
+        .location {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            color: #FFD700;
+            font-weight: 600;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .widget-container {
+                border-radius: 20px;
+            }
+
+            .day-number {
+                font-size: 3rem;
+            }
+
+            .countdown-time {
+                font-size: 2rem;
+            }
+
+            .time-value {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="widget-container">
+        <div class="stars" id="stars"></div>
+
+        <div class="header">
+            <div class="moon-icon">🌙</div>
+            <div class="title">RAMAZON</div>
+            <div class="subtitle">Toshkent vaqti bilan</div>
+        </div>
+
+        <div class="date-section">
+            <div class="day-number" id="dayNumber">--</div>
+            <div class="day-info">
+                <div class="day-name" id="dayName">--</div>
+                <div class="gregorian-date" id="gregorianDate">--</div>
+            </div>
+        </div>
+
+        <div class="countdown-section">
+            <div class="countdown-title">Keyingi vaqtgacha</div>
+            <div class="countdown-box">
+                <div class="countdown-label" id="countdownLabel">--</div>
+                <div class="countdown-time" id="countdownTime">00:00:00</div>
+                <div class="next-prayer">
+                    <div class="next-label">Keyingisi:</div>
+                    <div class="next-time" id="nextTime">--</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="times-section">
+            <div class="time-card" id="sahurCard">
+                <div class="time-info">
+                    <div class="time-icon">🌅</div>
+                    <div class="time-details">
+                        <h3>Saharlik</h3>
+                        <p>Oydinlashish</p>
+                    </div>
+                </div>
+                <div class="time-value" id="sahurTime">--:--</div>
+            </div>
+
+            <div class="time-card" id="iftarCard">
+                <div class="time-info">
+                    <div class="time-icon">🌙</div>
+                    <div class="time-details">
+                        <h3>Iftorlik</h3>
+                        <p>Quyib ketish</p>
+                    </div>
+                </div>
+                <div class="time-value" id="iftarTime">--:--</div>
+            </div>
+        </div>
+
+        <div class="progress-section">
+            <div class="progress-header">
+                <span>Ramazon progressi</span>
+                <span id="progressText">0/30</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div class="location">
+                <span>📍</span>
+                <span>Toshkent</span>
+            </div>
+            <div class="footer-text">1447 Hijriy • 2026</div>
+        </div>
+    </div>
+
+    <script>
+        // Calendar data for Ramadan 2026 (Tashkent)
+        const ramadanData = [
+            { day: 1, date: "2026-02-19", sahur: "05:54", iftar: "18:05", dayName: "Payshanba" },
+            { day: 2, date: "2026-02-20", sahur: "05:53", iftar: "18:07", dayName: "Juma" },
+            { day: 3, date: "2026-02-21", sahur: "05:51", iftar: "18:08", dayName: "Shanba" },
+            { day: 4, date: "2026-02-22", sahur: "05:50", iftar: "18:09", dayName: "Yakshanba" },
+            { day: 5, date: "2026-02-23", sahur: "05:49", iftar: "18:10", dayName: "Dushanba" },
+            { day: 6, date: "2026-02-24", sahur: "05:47", iftar: "18:11", dayName: "Seshanba" },
+            { day: 7, date: "2026-02-25", sahur: "05:46", iftar: "18:13", dayName: "Chorshanba" },
+            { day: 8, date: "2026-02-26", sahur: "05:44", iftar: "18:14", dayName: "Payshanba" },
+            { day: 9, date: "2026-02-27", sahur: "05:43", iftar: "18:15", dayName: "Juma" },
+            { day: 10, date: "2026-02-28", sahur: "05:41", iftar: "18:16", dayName: "Shanba" },
+            { day: 11, date: "2026-03-01", sahur: "05:40", iftar: "18:17", dayName: "Yakshanba" },
+            { day: 12, date: "2026-03-02", sahur: "05:38", iftar: "18:19", dayName: "Dushanba" },
+            { day: 13, date: "2026-03-03", sahur: "05:37", iftar: "18:20", dayName: "Seshanba" },
+            { day: 14, date: "2026-03-04", sahur: "05:35", iftar: "18:21", dayName: "Chorshanba" },
+            { day: 15, date: "2026-03-05", sahur: "05:34", iftar: "18:22", dayName: "Payshanba" },
+            { day: 16, date: "2026-03-06", sahur: "05:32", iftar: "18:23", dayName: "Juma" },
+            { day: 17, date: "2026-03-07", sahur: "05:31", iftar: "18:24", dayName: "Shanba" },
+            { day: 18, date: "2026-03-08", sahur: "05:29", iftar: "18:25", dayName: "Yakshanba" },
+            { day: 19, date: "2026-03-09", sahur: "05:27", iftar: "18:27", dayName: "Dushanba" },
+            { day: 20, date: "2026-03-10", sahur: "05:26", iftar: "18:28", dayName: "Seshanba" },
+            { day: 21, date: "2026-03-11", sahur: "05:24", iftar: "18:29", dayName: "Chorshanba" },
+            { day: 22, date: "2026-03-12", sahur: "05:22", iftar: "18:30", dayName: "Payshanba" },
+            { day: 23, date: "2026-03-13", sahur: "05:21", iftar: "18:31", dayName: "Juma" },
+            { day: 24, date: "2026-03-14", sahur: "05:19", iftar: "18:32", dayName: "Shanba" },
+            { day: 25, date: "2026-03-15", sahur: "05:17", iftar: "18:33", dayName: "Yakshanba" },
+            { day: 26, date: "2026-03-16", sahur: "05:15", iftar: "18:34", dayName: "Dushanba" },
+            { day: 27, date: "2026-03-17", sahur: "05:14", iftar: "18:35", dayName: "Seshanba" },
+            { day: 28, date: "2026-03-18", sahur: "05:12", iftar: "18:37", dayName: "Chorshanba" },
+            { day: 29, date: "2026-03-19", sahur: "05:10", iftar: "18:38", dayName: "Payshanba" },
+            { day: 30, date: "2026-03-20", sahur: "05:08", iftar: "18:39", dayName: "Juma" }
+        ];
+
+        // Generate stars
+        function generateStars() {
+            const container = document.getElementById('stars');
+            for (let i = 0; i < 50; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                container.appendChild(star);
+            }
+        }
+
+        // Parse time string to Date object
+        function parseTime(dateStr, timeStr) {
+            const [hours, minutes] = timeStr.split(':').map(Number);
+            const date = new Date(dateStr);
+            date.setHours(hours, minutes, 0, 0);
+            return date;
+        }
+
+        // Format time remaining
+        function formatTimeRemaining(ms) {
+            if (ms <= 0) return "00:00:00";
+            const hours = Math.floor(ms / (1000 * 60 * 60));
+            const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((ms % (1000 * 60)) / 1000);
+            return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Get current Ramadan day data
+        function getCurrentDayData() {
+            const now = new Date();
+            const currentDate = now.toISOString().split('T')[0];
+
+            // Find current day in Ramadan
+            let currentDay = ramadanData.find(d => d.date === currentDate);
+
+            // If not in Ramadan, show first day as default
+            if (!currentDay) {
+                const ramadanStart = new Date("2026-02-19");
+                const ramadanEnd = new Date("2026-03-20");
+
+                if (now < ramadanStart) {
+                    return { ...ramadanData[0], isBefore: true, daysUntil: Math.ceil((ramadanStart - now) / (1000 * 60 * 60 * 24)) };
+                } else if (now > ramadanEnd) {
+                    return { ...ramadanData[29], isAfter: true };
+                }
+            }
+
+            return currentDay;
+        }
+
+        // Update widget
+        function updateWidget() {
+            const now = new Date();
+            const dayData = getCurrentDayData();
+
+            // Update day info
+            document.getElementById('dayNumber').textContent = dayData.day;
+            document.getElementById('dayName').textContent = dayData.dayName;
+
+            const dateObj = new Date(dayData.date);
+            const months = ["Yanvar", "Fevral", "Mart", "Aprel", "May", "Iyun", "Iyul", "Avgust", "Sentabr", "Oktabr", "Noyabr", "Dekabr"];
+            document.getElementById('gregorianDate').textContent = `${dateObj.getDate()}-${months[dateObj.getMonth()]}, ${dateObj.getFullYear()}`;
+
+            // Update times
+            document.getElementById('sahurTime').textContent = dayData.sahur;
+            document.getElementById('iftarTime').textContent = dayData.iftar;
+
+            // Calculate countdown
+            const sahurTime = parseTime(dayData.date, dayData.sahur);
+            const iftarTime = parseTime(dayData.date, dayData.iftar);
+
+            let targetTime;
+            let label;
+            let nextLabel;
+            let activeCard;
+
+            if (now < sahurTime) {
+                // Before sahur
+                targetTime = sahurTime;
+                label = "Saharlikgacha";
+                nextLabel = `Iftorlik: ${dayData.iftar}`;
+                activeCard = 'sahurCard';
+            } else if (now < iftarTime) {
+                // Between sahur and iftar
+                targetTime = iftarTime;
+                label = "Iftorlikgacha";
+                nextLabel = `Ertangi saharlik: ${dayData.sahur}`;
+                activeCard = 'iftarCard';
+            } else {
+                // After iftar - show tomorrow's sahur
+                const tomorrow = new Date(now);
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                const tomorrowStr = tomorrow.toISOString().split('T')[0];
+                const tomorrowData = ramadanData.find(d => d.date === tomorrowStr);
+
+                if (tomorrowData) {
+                    targetTime = parseTime(tomorrowData.date, tomorrowData.sahur);
+                    label = "Ertangi saharlikgacha";
+                    nextLabel = `Iftorlik: ${tomorrowData.iftar}`;
+                    activeCard = 'sahurCard';
+                } else {
+                    label = "Ramazon tugadi";
+                    document.getElementById('countdownTime').textContent = "🎉";
+                    nextLabel = "Keyingi yilgacha";
+                }
+            }
+
+            // Update countdown
+            if (targetTime) {
+                const remaining = targetTime - now;
+                document.getElementById('countdownTime').textContent = formatTimeRemaining(remaining);
+                document.getElementById('countdownLabel').textContent = label;
+                document.getElementById('nextTime').textContent = nextLabel;
+
+                // Highlight active card
+                document.querySelectorAll('.time-card').forEach(card => card.classList.remove('active'));
+                if (activeCard) {
+                    document.getElementById(activeCard).classList.add('active');
+                }
+            }
+
+            // Update progress
+            const progress = (dayData.day / 30) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('progressText').textContent = `${dayData.day}/30`;
+        }
+
+        // Initialize
+        generateStars();
+        updateWidget();
+
+        // Update every second
+        setInterval(updateWidget, 1000);
+
+        // Update immediately when tab becomes visible
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                updateWidget();
+            }
+        });
+    </script>
+</body>
+</html>
